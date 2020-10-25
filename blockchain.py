@@ -1,4 +1,6 @@
-
+import hashlib
+from time import time
+import json
 
 
 
@@ -7,8 +9,29 @@ class Blockchain(object):
         self.chain = []
         self.current_transactions = []
 
-    def new_block(self):
-        pass
+        #create the genesis block
+        self.new_block(previous_hash = 1, proof= 100)
+
+    def new_block(self, proof, previous_hash= None):
+        """
+        create a new block in the blockchain
+        :param proof: <int> the proof given by the proof of work algorithm
+        :param previous_hash: (Optional) <str> hash of previous block
+        :return: <dict> new block
+        """
+        block = {
+            'index' : len(self.chain) + 1,
+            'timestamp' : time(),
+            'transaction' : self.current_transactions,
+            'proof' : proof,
+            'previous_hash' : previous_hash or self.hash(self.chain[-1])
+        }
+
+        #reset the list of new transactions
+        self.current_transactions = []
+
+        self.chain.append(block)
+        return block
 
     def new_transaction(self, sender, recipient, amount):
         """
@@ -30,8 +53,15 @@ class Blockchain(object):
 
     @staticmethod
     def hash(block):
-        pass
+        """
+        creates a sha-256 hash of a block
+        :param block: <dict> block
+        :return: <str>
+        """
+        #we must make sure that the dictionary is ordered or we will have inconsistent hashes
+        block_string = json.dumps(block, sort_keys=True).encode()
+        return hashlib.sha256(block_string).hexdigest()
 
     @property
     def last_block(self):
-        pass
+        return self.chain[-1]
