@@ -1,6 +1,7 @@
 import hashlib
 from time import time
 import json
+from uuid import uuid4
 
 
 
@@ -49,6 +50,26 @@ class Blockchain(object):
         })
 
         return self.last_block['index'] + 1
+
+
+    def proof_of_work(self, last_proof):
+        """
+        hash(pp') contains leading 4 zeros
+        :param last_proof: <int>
+        :return: <int>
+        """
+        proof = 0
+        while self.valid_proof(last_proof, proof) is False:
+            proof += 1
+        return proof
+
+
+    @staticmethod
+    def valid_proof(last_proof, proof):
+        guess = f'{last_proof}{proof}'.encode()
+        guess_hash = hashlib.sha256(guess).hexdigest()
+        return guess_hash[:4] == "0000"
+
 
 
     @staticmethod
