@@ -6,6 +6,14 @@ from uuid import uuid4
 from flask import Flask
 from blockchain import Blockchain
 
+
+"""
+This is the app from which you can add a /
+transaction , a block /
+or mine a new block
+"""
+
+
 app = Flask(__name__)
 
 node_identifier = str(uuid4()).replace('-','')
@@ -31,4 +39,5 @@ def full_chain():
 
 
 if __name__ = '__main__':
+
     app.run(host='0.0.0.0', port = 5000)
